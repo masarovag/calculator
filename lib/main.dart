@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/data/enums.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String mainValue = "0";
   String? otherValue;
+  MathSign? sign;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               //theOtherNumber
               Text(
-                "${otherValue ?? ""}",
+                "${otherValue ?? ""} ${_mathSignToString()}",
                 style: TextStyle(fontSize: 20.0),
               ),
               SizedBox(height: 15.0),
@@ -61,7 +63,57 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CalculatorNumberButton(
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        sign = null;
+                        mainValue = "0";
+                        otherValue = null;
+                      });
+                    },
+                    value: "CE",
+                    hasLowerOpacity: true,
+                  ),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                    onTap: () {
+                      setState(() {
+                        mainValue = "0";
+                      });
+                    },
+                    value: "C",
+                    hasLowerOpacity: true,
+                  ),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                    onTap: () {
+                      setState(() {
+                        if (mainValue.length == 1 && mainValue != "0") {
+                          mainValue = "0";
+                          return;
+                        }
+                        if (mainValue.length > 0) {
+                          mainValue =
+                              mainValue.substring(0, mainValue.length - 1);
+                        }
+                      });
+                    },
+                    value: "<-",
+                    hasLowerOpacity: true,
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CalculatorNumberButton(
+                    onTap: () {
+                      setState(() {
+                        otherValue = mainValue;
+                        mainValue = "0";
+                        sign = MathSign.PLUS;
+                      });
+                    },
                     value: "+",
                     hasLowerOpacity: true,
                   ),
@@ -117,11 +169,101 @@ class _MyHomePageState extends State<MyHomePage> {
                       value: "3"),
                 ],
               ),
+              SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "4";
+                        });
+                      },
+                      value: "4"),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "5";
+                        });
+                      },
+                      value: "5"),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "6";
+                        });
+                      },
+                      value: "6"),
+                ],
+              ),
+              SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "7";
+                        });
+                      },
+                      value: "7"),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "8";
+                        });
+                      },
+                      value: "8"),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "9";
+                        });
+                      },
+                      value: "9"),
+                ],
+              )
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _mathSignToString() {
+    if (sign == MathSign.PLUS) {
+      return "+";
+    } else if (sign == MathSign.MINUS) {
+      return "-";
+    } else if (sign == MathSign.MULTIPLY) {
+      return "*";
+    } else if (sign == MathSign.DIVIDE) {
+      return "/";
+    } else {
+      return "";
+    }
   }
 }
 
@@ -141,14 +283,14 @@ class CalculatorNumberButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 90,
-        width: 90,
+        height: 80,
+        width: 80,
         color:
             hasLowerOpacity ? Colors.indigo.withOpacity(0.75) : Colors.indigo,
         alignment: Alignment.center,
         child: Text(
           value,
-          style: TextStyle(fontSize: 58, color: Colors.amber),
+          style: TextStyle(fontSize: 48, color: Colors.amber),
           textAlign: TextAlign.center,
         ),
       ),
