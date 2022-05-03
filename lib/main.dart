@@ -100,6 +100,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     value: "<-",
                     hasLowerOpacity: true,
                   ),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (sign == null || otherValue == null) {
+                            return;
+                          }
+
+                          int mainValueInt = int.parse(mainValue);
+                          int otherValueInt = int.parse(otherValue!);
+
+                          int sum =
+                              calculateResult(otherValueInt, mainValueInt);
+                          mainValue = "$sum";
+                          otherValue = null;
+                          sign = null;
+                        });
+                      },
+                      value: "=",
+                      hasLowerOpacity: true),
                 ],
               ),
               SizedBox(height: 10.0),
@@ -119,14 +139,38 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   SizedBox(width: 10.0),
                   CalculatorNumberButton(
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        otherValue = mainValue;
+                        mainValue = "0";
+                        sign = MathSign.MINUS;
+                      });
+                    },
                     value: "-",
                     hasLowerOpacity: true,
                   ),
                   SizedBox(width: 10.0),
                   CalculatorNumberButton(
-                    onTap: () {},
-                    value: "=",
+                    onTap: () {
+                      setState(() {
+                        otherValue = mainValue;
+                        mainValue = "0";
+                        sign = MathSign.MULTIPLY;
+                      });
+                    },
+                    value: "*",
+                    hasLowerOpacity: true,
+                  ),
+                  SizedBox(width: 10),
+                  CalculatorNumberButton(
+                    onTap: () {
+                      setState(() {
+                        otherValue = mainValue;
+                        mainValue = "0";
+                        sign = MathSign.DIVIDE;
+                      });
+                    },
+                    value: "/",
                     hasLowerOpacity: true,
                   ),
                 ],
@@ -167,6 +211,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         });
                       },
                       value: "3"),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "";
+                        });
+                      },
+                      value: "😊")
                 ],
               ),
               SizedBox(height: 10.0),
@@ -205,6 +260,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         });
                       },
                       value: "6"),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "";
+                        });
+                      },
+                      value: "❤"),
                 ],
               ),
               SizedBox(height: 10.0),
@@ -243,6 +309,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         });
                       },
                       value: "9"),
+                  SizedBox(width: 10.0),
+                  CalculatorNumberButton(
+                      onTap: () {
+                        setState(() {
+                          if (mainValue == "0") {
+                            mainValue = "";
+                          }
+                          mainValue = mainValue + "0";
+                        });
+                      },
+                      value: "0"),
                 ],
               )
             ],
@@ -250,6 +327,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  int calculateResult(int number1, int number2) {
+    if (sign == MathSign.PLUS) {
+      return number1 + number2;
+    } else if (sign == MathSign.MINUS) {
+      return number1 - number2;
+    } else if (sign == MathSign.MULTIPLY) {
+      return number1 * number2;
+    } else if (sign == MathSign.DIVIDE) {
+      return number1 ~/ number2;
+    } else {
+      return 0;
+    }
   }
 
   String _mathSignToString() {
@@ -283,14 +374,14 @@ class CalculatorNumberButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 80,
-        width: 80,
+        height: 65,
+        width: 65,
         color:
             hasLowerOpacity ? Colors.indigo.withOpacity(0.75) : Colors.indigo,
         alignment: Alignment.center,
         child: Text(
           value,
-          style: TextStyle(fontSize: 48, color: Colors.amber),
+          style: TextStyle(fontSize: 30, color: Colors.amber),
           textAlign: TextAlign.center,
         ),
       ),
