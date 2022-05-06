@@ -13,14 +13,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -47,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               //theOtherNumber
               Text(
+                //?? - pokud je otherValue null tak se použije hodnota v pravo od ??
                 "${otherValue ?? ""} ${_mathSignToString()}",
                 style: TextStyle(fontSize: 20.0),
               ),
@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   CalculatorNumberButton(
                     onTap: () {
+                      //setstate překreslí obrazovku aby byla vidět změněná hodnota proměnné
                       setState(() {
                         sign = null;
                         mainValue = "0";
@@ -87,10 +88,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   CalculatorNumberButton(
                     onTap: () {
                       setState(() {
-                        if (mainValue.length == 1 && mainValue != "0") {
+                        //!= slouží k porovnání nerovnosti
+                        if (mainValue.length == 1) {
                           mainValue = "0";
                           return;
                         }
+
                         if (mainValue.length > 0) {
                           mainValue =
                               mainValue.substring(0, mainValue.length - 1);
@@ -104,21 +107,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   CalculatorNumberButton(
                       onTap: () {
                         setState(() {
-                          if (sign == null || otherValue == null) {
-                            return;
+                          if (mainValue == "0") {
+                            mainValue = "";
                           }
-
-                          int mainValueInt = int.parse(mainValue);
-                          int otherValueInt = int.parse(otherValue!);
-
-                          int sum =
-                              calculateResult(otherValueInt, mainValueInt);
-                          mainValue = "$sum";
-                          otherValue = null;
-                          sign = null;
+                          mainValue = mainValue + "";
                         });
                       },
-                      value: "=",
+                      value: "",
                       hasLowerOpacity: true),
                 ],
               ),
@@ -128,11 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   CalculatorNumberButton(
                     onTap: () {
-                      setState(() {
-                        otherValue = mainValue;
-                        mainValue = "0";
-                        sign = MathSign.PLUS;
-                      });
+                      handleSignOnTap(MathSign.PLUS);
                     },
                     value: "+",
                     hasLowerOpacity: true,
@@ -140,11 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   SizedBox(width: 10.0),
                   CalculatorNumberButton(
                     onTap: () {
-                      setState(() {
-                        otherValue = mainValue;
-                        mainValue = "0";
-                        sign = MathSign.MINUS;
-                      });
+                      handleSignOnTap(MathSign.MINUS);
                     },
                     value: "-",
                     hasLowerOpacity: true,
@@ -152,11 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   SizedBox(width: 10.0),
                   CalculatorNumberButton(
                     onTap: () {
-                      setState(() {
-                        otherValue = mainValue;
-                        mainValue = "0";
-                        sign = MathSign.MULTIPLY;
-                      });
+                      handleSignOnTap(MathSign.MULTIPLY);
                     },
                     value: "*",
                     hasLowerOpacity: true,
@@ -164,11 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   SizedBox(width: 10),
                   CalculatorNumberButton(
                     onTap: () {
-                      setState(() {
-                        otherValue = mainValue;
-                        mainValue = "0";
-                        sign = MathSign.DIVIDE;
-                      });
+                      handleSignOnTap(MathSign.DIVIDE);
                     },
                     value: "/",
                     hasLowerOpacity: true,
@@ -221,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainValue = mainValue + "";
                         });
                       },
-                      value: "😊")
+                      value: "❤")
                 ],
               ),
               SizedBox(height: 10.0),
@@ -267,10 +246,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           if (mainValue == "0") {
                             mainValue = "";
                           }
-                          mainValue = mainValue + "";
+                          mainValue = mainValue + "0";
                         });
                       },
-                      value: "❤"),
+                      value: "0"),
                 ],
               ),
               SizedBox(height: 10.0),
@@ -313,13 +292,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   CalculatorNumberButton(
                       onTap: () {
                         setState(() {
-                          if (mainValue == "0") {
-                            mainValue = "";
-                          }
-                          mainValue = mainValue + "0";
+                          resolveCalculation();
                         });
                       },
-                      value: "0"),
+                      value: "=",
+                      hasLowerOpacity: false),
                 ],
               )
             ],
@@ -327,6 +304,31 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  void handleSignOnTap(MathSign mathSign) {
+    setState(() {
+      if (otherValue != null) {
+        resolveCalculation();
+      }
+      otherValue = mainValue;
+      mainValue = "0";
+      sign = mathSign;
+    });
+  }
+
+  void resolveCalculation() {
+    if (sign == null || otherValue == null) {
+      return;
+    }
+
+    int mainValueInt = int.parse(mainValue);
+    int otherValueInt = int.parse(otherValue!);
+
+    int sum = calculateResult(otherValueInt, mainValueInt);
+    mainValue = "$sum";
+    otherValue = null;
+    sign = null;
   }
 
   int calculateResult(int number1, int number2) {
