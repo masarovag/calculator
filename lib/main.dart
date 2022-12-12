@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/data/enums.dart';
+import 'package:calculator/data/enums.dart';
+
+import 'data/enums.dart';
 
 void main() {
   runApp(MyApp());
@@ -132,6 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   CalculatorNumberButton(
                     onTap: () {
                       handleSignOnTap(MathSign.MINUS);
+                      print(sign);
                     },
                     value: "-",
                     hasLowerOpacity: true,
